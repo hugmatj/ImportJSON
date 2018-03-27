@@ -215,6 +215,24 @@ function ImportJSONAdvanced(url, fetchOptions, query, parseOptions, includeFunc,
   var jsondata = UrlFetchApp.fetch(url, fetchOptions);
   var object   = JSON.parse(jsondata.getContentText());
   
+  // some hard-coded filter ops; these won't work on most data 
+  
+  object.results = object.results.filter(function(arrayElement) {
+    return arrayElement.type === "atm";
+  });
+
+  object.results.sort(function(a, b){
+    if (a.distance < b.distance) {
+      return -1;
+    }
+    if (a.distance > b.distance) {
+      return 1;
+    }
+    return 0;
+  });
+
+  object.results = object.results.slice(0, 3);
+  
   return parseJSONObject_(object, query, parseOptions, includeFunc, transformFunc);
 }
 
